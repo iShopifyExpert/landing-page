@@ -1,0 +1,305 @@
+{% layout none %}{% assign product = all_products[section.settings.product] %}
+{{ 'bootstrap.min.css' | asset_url | stylesheet_tag }}
+{{ '//fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap' | stylesheet_tag }}
+{{ '//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/fontawesome.min.css'| stylesheet_tag }}
+{{ 'style.css' | asset_url | stylesheet_tag }}
+{{ '//cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css' | stylesheet_tag }}
+<section id="section-top">
+  <div class="container">
+    <div class="box-spara">{% if section.settings.logo != blank %}
+      <a href="/"><img src="{{ section.settings.logo | img_url: '330x280' }}" class="img-responsive center-block" alt="{{shop.name}}"></a>{% endif %}
+      <div class="text-center top-heading">
+        <hr>
+        <h1>{{section.settings.title}}</h1>
+        <h4>{{section.settings.content}}</h4>
+      </div>
+      <div class="row pd-top padd">
+        <div class="col-md-6">{% for image in product.images %}{%if image.alt contains 'https://'%}
+          <div class="home-full-width-video">
+            <div class="video-wrapper"><iframe src="{{image.alt | escape}}?rel=0&amp;showinfo=0&amp;vq=720" width="850" height="480" frameborder="0" allowfullscreen=""></iframe></div>
+          </div>{% endif %}{% endfor %}
+          <ul class="list-inline v-list">
+            {% for image in product.images %}{%if image.alt != 'hide'%}{%if image.alt contains 'https://'%}{%else%}
+            <li><a data-fancybox="gallery" href="{{ image | product_img_url: '1200x1200' }}"><img src="{{ image | product_img_url: '100x100' }}" class="img-responsive"></a></li>
+			{% endif %}{% endif %}{% endfor %}
+          </ul>
+        </div>
+        <div class="col-md-6 product-details">
+          {{product.description}}
+          <a href="#get-spara-now" class="btn-sp">Get Spara Now!</a>
+        </div>
+      </div>
+      <div class="s-partner">
+        <h3>Spara Partners Include:</h3>
+        <ul class="list-inline center-block text-center">
+          <li><img src="{{section.settings.partner_img1 | img_url: '150x100' }}" class="img-responsive center-block" alt=""></li>
+          <li><img src="{{section.settings.partner_img2 | img_url: '150x100' }}" class="img-responsive center-block" alt=""></li>
+          <li><img src="{{section.settings.partner_img3 | img_url: '150x100' }}" class="img-responsive center-block" alt=""></li>
+          <li><img src="{{section.settings.partner_img4 | img_url: '150x100' }}" class="img-responsive center-block" alt=""></li>
+          <li><img src="{{section.settings.partner_img5 | img_url: '150x100' }}" class="img-responsive center-block" alt=""></li>
+        </ul>
+      </div>
+      <h1 class="text-center clr-b">Doctor Testimonials</h1>
+      <div class="pd-top">
+        <div class="col-md-offset-1 col-md-10">
+          <div class="media">
+            <div class="media-left">
+              <img src="{{ section.settings.name_img1 | img_url: '130x130' }}" class="media-object">
+              <p class="text-center">{{section.settings.name1}}</p>
+            </div>
+            <div class="media-body">
+              {{section.settings.testimonials1}}
+            </div>
+          </div>
+          <!-- Right-aligned -->
+          <div class="media pd-top">
+            <div class="media-body b1" align="right">
+              {{section.settings.testimonials2}}
+            </div>
+            <div class="media-right">
+              <img src="{{ section.settings.name_img2 | img_url: '130x130' }}" class="media-object">
+              <p  class="text-center">{{section.settings.name2}}</p>
+            </div>
+          </div>
+          <div class="media pd-top">
+            <div class="media-left">
+              <img src="{{ section.settings.name_img3 | img_url: '130x130' }}" class="media-object">
+              <p class="text-center">{{section.settings.name3}}</p>
+            </div>
+            <div class="media-body b1">
+              {{section.settings.testimonials3}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="s-partner b-shadow pd-top" id="get-spara-now">
+        <h1 class="text-center">{{section.settings.title2}}</h1>
+        <h4 class="text-center">{{section.settings.content2}}</h4>
+        <div class="packages hidden-xs">
+          {% for variant in product.variants %}
+          <div class="col-sm-4 box{%if forloop.index0 == 1%} box-1{%endif%} text-center">
+            <p>{{product.title}}</p>{% for image in product.images %}{% if image == variant.image %}
+            <img src="{{image.src | img_url: 'large'}}" class="img-responsive center-block" alt="{{variant.title | escape}}">{% endif %}{% endfor %}
+            <h1>{{variant.title}}</h1>
+            <span class="price money">{{variant.price | money}}</span>
+            <span class="discount">{% if variant.compare_at_price > variant.price %}{% assign save = variant.compare_at_price | minus: variant.price | money %}<del class="clr-red">Retail {{variant.compare_at_price | money}}</del> <span>(Save {{ save }})</span>{%endif%}</span>
+            <p class="pd-top">
+              <img src="{{'free-shipping.png' | asset_url}}" class="img-responsive center-block" alt="Free Shipping">
+            </p>
+            <form method="post" action="/cart/add" enctype="multipart/form-data" id="product-form-{{ variant.id }}">
+              <input type="hidden" name="id" value="{{variant.id}}" />
+              <input type="hidden" name="return_to" value="/checkout/" />
+              <input type="submit" value="NEXT" class="btn n-btn" />
+            </form>
+          </div>
+          {% endfor %}
+        </div>
+        {% for variant in product.variants %}
+        <div class="box visible-xs text-center">
+          <div class="row">
+            <div class="col-sm-4 col-xs-4">
+              {% for image in product.images %}{% if image == variant.image %}<img src="{{image.src | img_url: 'large'}}" class="img-responsive center-block" alt="{{variant.title | escape}}">{% endif %}{% endfor %}
+            </div>
+            <div class="col-sm-4 col-xs-4">
+              <h4>{{variant.title}}</h4>
+              <h4>{{variant.price | money}}</h4>
+            </div>
+            <div class="col-sm-4 col-xs-4 product-form">
+              <img src="{{'free-shipping.png' | asset_url}}" class="img-responsive center-block" alt="">
+              <form method="post" action="/cart/add" enctype="multipart/form-data" id="product-form-{{ variant.id }}">
+                <input type="hidden" name="id" value="{{variant.id}}" />
+                <input type="hidden" name="return_to" value="/checkout/" />
+                <input type="submit" value="NEXT" class="btn n-btn" />
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}{% if section.settings.payment_method != blank %}
+        <div class="clearfix"></div>
+        <hr>
+        <img src="{{ section.settings.payment_method | img_url: '900x100' }}" class="img-responsive center-block" alt="Payment Method">{% endif %}
+      </div>
+      <div class="bg-o text-center">
+        <h3><strong>Have a Question?</strong> <a href="/pages/faqs" class="clr-w">See Our FAQs</a></h3>
+      </div>
+    </div>
+  </div>
+  <p class="terms text-center clr-w">{{section.settings.terms}}</p>
+  <ul class="footer-links list-inline text-center">{% for link in linklists[section.settings.menu_bottom].links %}
+    <li><a href="{{ link.url }}">{{ link.title }}</a></li>{% endfor %}
+  </ul>
+  <p class="copyright text-center clr-w pd-top">Copyright © {{ "now" | date: "%Y" }} Spara. All Rights Reserved.</p>
+</section>
+
+{{ 'jquery-3.3.1.min.js' | asset_url | script_tag }}
+{{ 'bootstrap.min.js' | asset_url | script_tag }}
+{{ '//cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js' | script_tag }}
+<script>
+  $(document).ready(function(){
+    $("a[href^='#']").click(function(e) {
+      e.preventDefault();
+      var position = $($(this).attr("href")).offset().top;
+      $("body, html").animate({scrollTop: position});
+    });
+  });
+</script>
+{% schema %}
+  {
+    "name": "Landing Page",
+    "settings": [
+     {
+      "type": "header",
+      "content": "Header"
+     },
+     {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image",
+      "info": "660 x 560px .png recommended"
+     },
+     {
+      "type": "text",
+      "id": "title",
+      "label": "Heading 1",
+      "default": "Don’t let FOOT PAIN hold you back, <br>stay on track with Spara - #1 Foot Massage Tool"
+     },
+     {
+      "type": "text",
+      "id": "content",
+      "label": "Paragraph 1",
+      "default": "Foot injury prevention and treatment has never been so easy!"
+     },
+     {
+      "type": "header",
+      "content": "Spara Partners Include"
+     },
+     {
+      "type": "image_picker",
+      "id": "partner_img1",
+      "label": "Partner image 1"
+     },
+     {
+      "type": "image_picker",
+      "id": "partner_img2",
+      "label": "Partner image 2"
+     },
+     {
+      "type": "image_picker",
+      "id": "partner_img3",
+      "label": "Partner image 3"
+     },
+     {
+      "type": "image_picker",
+      "id": "partner_img4",
+      "label": "Partner image 4"
+     },
+     {
+      "type": "image_picker",
+      "id": "partner_img5",
+      "label": "Partner image 5"
+     },
+     {
+      "type": "header",
+      "content": "Doctor Testimonials"
+     },
+     {
+      "type": "text",
+      "id": "name1",
+      "label": "Name 1",
+      "default": "Dr. Michael J. Chin, DPM"
+     },
+     {
+      "type": "image_picker",
+      "id": "name_img1",
+      "label": "Customer image 1"
+     },
+     {
+      "type": "richtext",
+      "id": "testimonials1",
+      "label": "Testimonials 1",
+      "default": "<p>Spara has been a GAME CHANGER for my patients with plantar fascial pain. The track keeps the marble in line with the fascia and muscle. It’s a great way to manage and prevent the recurrence of plantar foot pain.</p>"
+     },
+     {
+      "type": "text",
+      "id": "name2",
+      "label": "Name 2",
+      "default": "Dr. Eugene Lopez, MD"
+     },
+     {
+      "type": "image_picker",
+      "id": "name_img2",
+      "label": "Customer image 2"
+     },
+     {
+      "type": "richtext",
+      "id": "testimonials2",
+      "label": "Testimonials 2",
+      "default": "<p>I have been a Sports Medicine Specialist & Orthopedic Surgeon for over 33 years. In my professional experience, I have treated numerous Chicago sports legends including Walter Payton, Ed Obradavich, Dennis McKinnon, as well as several PGA Tour Professionals. Injury prevention is a crucial element in any athletes training, but inevitably muscles/joints/bones wear down over time. My clients come to me for the best treatment options and sustainable strategies to help them stay active. Spara is not only an easy-to-use, affordable means for athletes to prevent injury, but an effective tool to keep active individuals on their feet post injury.</p>"
+     },
+     {
+      "type": "text",
+      "id": "name3",
+      "label": "Name 3",
+      "default": "Dr. Michael J. Chin, DPM"
+     },
+     {
+      "type": "image_picker",
+      "id": "name_img3",
+      "label": "Customer image 3"
+     },
+     {
+      "type": "richtext",
+      "id": "testimonials3",
+      "label": "Testimonials 3",
+      "default": "<p>As an experienced Physical Medicine & Rehabilitation Physician, and an Osteopathic Manipulative Medicine Specialist, I treat many people with multiple pain issues. I am always looking for the Best of the Best in Self-Help strategies and devices. Spara is a very well made, unique, thoughtfully designed device that can be easily used for the relief of plantar fasciitis. Due to the specific design and material qualities, this device can deliver focused, therapeutic pressure on injured areas without a lot of extra work from the patient. It also has applications for alleviating myofascial trigger points that are a source of foot pain as well. I highly recommend this device.</p>"
+     },
+     {
+      "type": "header",
+      "content": "Product Bundle"
+     },
+     {
+      "type": "text",
+      "id": "title2",
+      "label": "Heading 2",
+      "default": "Foot injury prevention and treatment has never been so easy!"
+     },
+     {
+      "type": "text",
+      "id": "content2",
+      "label": "Paragraph 2",
+      "default": "FREE 2-3 DAY SHIPPING on all domestic orders!"
+     },
+     {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+     },
+     {
+      "type": "header",
+      "content": "Footer"
+     },
+     {
+      "type": "image_picker",
+      "id": "payment_method",
+      "label": "Payment Method image"
+     },
+     {
+      "type": "link_list",
+      "id": "menu_bottom",
+      "label": "Menu Bottom",
+      "default": "footer"
+     },
+     {
+      "type": "textarea",
+      "id": "terms",
+      "label": "Terms"
+     }
+    ],
+    "presets": [
+     {
+      "category": "Landing Page",
+      "name": "Homepage"
+     }
+    ]
+  }
+{% endschema %}
